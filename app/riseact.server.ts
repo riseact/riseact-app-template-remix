@@ -1,14 +1,19 @@
 import Riseact from "./lib/riseact";
 import type { RiseactSession, SessionStorage } from "./lib/riseact/auth";
-import { sessionByToken, sessionCreate } from "./models/session.server";
+import { sessionByUuid, sessionCreate } from "./models/session.server";
+import { getUserSession } from "./session.server";
 
 function PrismaSessionStorage(): SessionStorage {
   return {
     save: async (session: RiseactSession) => {
       await sessionCreate(session)  
     },
-    load: async (organization: string) => {
-      return await sessionByToken(organization)
+    load: async (request: Request) => {
+      const userSession = await getUserSession(request)
+
+      if(!userSession) return null
+
+      return sessionByUuid(userSession.uuid)
     }
   }
 }

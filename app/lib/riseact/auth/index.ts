@@ -19,14 +19,10 @@ export interface RiseactSession {
 
 export interface SessionStorage {
   save: (session: RiseactSession) => Promise<void>;
-  load: (organization: string) => Promise<RiseactSession | null>;
+  load: (request: Request) => Promise<RiseactSession | null>;
 }
 
 export function authorization(config: RiseactConfig) {
-  async function session(): Promise<RiseactSession | null> {
-    return await config.sessionStorage.load("riseact");
-  }
-
   async function getAuthorization() {
     const conf = getOAuthClientConfig();
     const client = await OAuthClient(conf);
@@ -76,7 +72,6 @@ export function authorization(config: RiseactConfig) {
   }
 
   return {
-    session,
     getAuthorization,
     initSession,
   };

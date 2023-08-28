@@ -3,6 +3,7 @@ import invariant from "tiny-invariant";
 
 import { Session } from "@prisma/client";
 import { sessionByUuid } from "./models/session.server";
+import riseact from "./riseact.server";
 
 invariant(process.env.SESSION_SECRET, "SESSION_SECRET must be set");
 
@@ -54,10 +55,10 @@ export async function requireSessionUUID(
   return userSessionUuid;
 }
 
-export async function requireSession(request: Request) {
-  const userSession = await getUserSession(request);
+export async function requireAdmin(request: Request) {
+  const admin = await riseact.admin(request);
 
-  if(userSession) return userSession;
+  if(admin) return admin;
   
   throw await logout(request);
 }
